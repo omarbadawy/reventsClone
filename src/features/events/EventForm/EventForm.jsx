@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import { Segment, Form, Button, Grid, Header } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import { reduxForm, Field } from 'redux-form';
-import { createEvent, updateEvent } from '../eventsActions';
+import { combineValidators, isRequired, composeValidators, hasLengthGreaterThan } from 'revalidate';
 import cuid from 'cuid';
+
+import { createEvent, updateEvent } from '../eventsActions';
 import TextInput from '../../../app/common/form/TextInput';
 import TextArea from '../../../app/common/form/TextArea';
 import SelectInput from '../../../app/common/form/SelectInput';
@@ -35,7 +37,7 @@ class EventForm extends Component {
     };
 
     render() {
-        const { history, initialValues } = this.props;
+        const { history, initialValues, invalid, submitting, pristine } = this.props;
         return (
             <Grid>
                 <Grid.Column width={10}>
@@ -66,7 +68,7 @@ class EventForm extends Component {
                             <Field name="city" component={TextInput} placeholder="Event City" />
                             <Field name="venue" component={TextInput} placeholder="Event Venue" />
                             <Field name="date" component={TextInput} placeholder="Event Date" />
-                            <Button positive type="submit">
+                            <Button disabled={invalid || submitting || pristine} positive type="submit">
                                 Submit
                             </Button>
                             <Button
@@ -105,7 +107,18 @@ const mapDispatchToProps = {
     updateEvent,
 };
 
+const validate = combineValidators({
+    title: isRequired({ message: 'The event title is required' }),
+    category: isRequired({ message: 'The category is required' }),
+    description: composeValidators(
+        isRequired({ message: 'Please enter the description'}),
+        hasLengthGreaterThan(4)({message: 'Desctiption needs to be at least 5 characters'})
+    )(),
+    city: isRequired('city'),
+    venue: isRequired('venue')
+})
+
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(reduxForm({ form: 'eventForm' })(EventForm));
+)(reduxForm({ form: 'eventForm', validate })(EventForm));
