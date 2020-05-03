@@ -7,6 +7,7 @@ import EventDetailedSidebar from './EventDetailedSidebar';
 import { connect } from 'react-redux';
 
 const EventDetailedPage = ({ event }) => {
+    console.log(event)
     return (
         <Grid>
             <Grid.Column width={10}>

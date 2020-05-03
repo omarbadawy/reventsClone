@@ -8,6 +8,7 @@ import { Provider } from 'react-redux';
 import { configureStore } from './app/store/configureStore';
 import ScrollToTop from './app/common/util/ScrollToTop';
 
+
 const store = configureStore();
 
 const rootEl = document.getElementById('root');
